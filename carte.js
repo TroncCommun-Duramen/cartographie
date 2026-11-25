@@ -47,6 +47,13 @@ async function connecter(code) {
 // Grumes et sorties, ramenées à une même forme pour la carte
 async function chargerDonnees(session) {
   var grumes, sorties;
+  if (session.type === 'demo') {
+    // Démonstration : grumes fictives de demo.js, rien n'est lu dans la base
+    await chargerScript('demo.js');
+    var cles = {};
+    window.DEMO_GRUMES.forEach(function (g) { if (g.debitee) cles[g.id + '_0'] = true; });
+    return window.DEMO_GRUMES.map(function (g) { return normaliser(Object.assign({ commune: session.nom }, g), cles); });
+  }
   if (session.type === 'tc') {
     var res = await Promise.all([requete('rpc/tc_grumes', session, {}), requete('rpc/tc_sorties', session, {})]);
     grumes = res[0]; sorties = res[1];
@@ -88,6 +95,13 @@ function normaliser(g, sortiesCles) {
     precision: num(g.gps_precision),
     manuelle: !!g.position_manuelle
   };
+}
+function chargerScript(src) {
+  return new Promise(function (ok, ko) {
+    var s = document.createElement('script');
+    s.src = src; s.onload = ok; s.onerror = ko;
+    document.head.appendChild(s);
+  });
 }
 function num(v) { if (v === null || v === undefined || v === '') return null; var n = Number(v); return isFinite(n) ? n : null; }
 
@@ -141,6 +155,7 @@ $('form-connexion').addEventListener('submit', async function (e) {
 });
 
 $('deconnexion').addEventListener('click', function () {
+  if (session && session.type === 'demo') { location.href = location.pathname; return; }
   ecrireSession(null);
   location.reload();
 });
@@ -151,7 +166,10 @@ async function ouvrir(s) {
   $('ecran-connexion').hidden = true;
   $('ecran-carte').hidden = false;
   $('session').hidden = false;
-  $('nom-session').textContent = s.type === 'tc' ? 'Tronc Commun · toutes les communes' : s.nom;
+  $('nom-session').textContent = s.type === 'tc' ? 'Tronc Commun · toutes les communes'
+    : s.type === 'demo' ? 'Démonstration · grumes fictives' : s.nom;
+  $('deconnexion').textContent = s.type === 'demo' ? 'Quitter la démonstration' : 'Se déconnecter';
+  $('note-demo').hidden = s.type !== 'demo';
   document.body.classList.toggle('sans-commune', s.type !== 'tc');
   $('m-commune').hidden = s.type !== 'tc';
   if (!carte) creerCarte();
@@ -351,7 +369,7 @@ function rafraichir(cadrer) {
 function cadrerCarte(liste) {
   if (zone && zone.couche) { carte.fitBounds(zone.couche.getBounds(), { padding: [40, 40], maxZoom: 18 }); return; }
   if (liste.length) { carte.fitBounds(L.latLngBounds(liste.map(function (g) { return [g.lat, g.lon]; })), { padding: [50, 50], maxZoom: 18 }); return; }
-  var c = session.type === 'commune' && contourDe(session.nom);
+  var c = session.type !== 'tc' && contourDe(session.nom);
   if (c) carte.fitBounds(L.polygon(c).getBounds());
   else carte.setView(NANTES, 11);
 }
@@ -363,7 +381,7 @@ function surligner(id) { document.querySelectorAll('#liste tr').forEach(function
 async function chercherLieu(texte) {
   var btn = $('chercher-lieu');
   btn.disabled = true; btn.textContent = 'Recherche…';
-  var dansCommune = session.type === 'commune' && contourDe(session.nom) ? ', ' + session.nom : '';
+  var dansCommune = session.type !== 'tc' && contourDe(session.nom) ? ', ' + session.nom : '';
   var params = new URLSearchParams({
     format: 'jsonv2', q: texte + dansCommune, limit: '1', polygon_geojson: '1', 'accept-language': 'fr',
     countrycodes: 'fr', viewbox: '-1.85,47.08,-1.30,47.36', bounded: '1'   // Nantes Métropole
@@ -462,8 +480,14 @@ $('liste').addEventListener('click', function (e) {
 // ═══════════ DÉMARRAGE ═══════════
 // Le code gardé sur l'appareil est revérifié à chaque ouverture : un code coupé
 // dans la base ne donne plus accès à rien.
+// Adresse terminée par ?demo : démonstration sans code, avec des grumes fictives
 var gardee = lireSession();
-if (gardee && gardee.code) {
+if (new URLSearchParams(location.search).has('demo')) {
+  ouvrir({ type: 'demo', nom: 'Nantes' }).catch(function () {
+    $('erreur-connexion').textContent = 'Démonstration indisponible (pas de réseau ?).';
+    $('erreur-connexion').hidden = false;
+  });
+} else if (gardee && gardee.code) {
   connecter(gardee.code).then(function (s) {
     if (!s) { ecrireSession(null); throw new Error('code'); }
     ecrireSession(s);

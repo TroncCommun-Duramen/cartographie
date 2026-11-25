@@ -105,7 +105,10 @@ button,input,select{font:inherit;color:inherit}
 .tableau tbody tr:hover,.tableau tbody tr.vise{background:var(--indigo-clair)}
 .sans-commune .col-commune{display:none}
 .note{margin:6px max(2.5vw,14px) 12px;font-size:13px;color:var(--cendre)}
-.note:last-child{margin-bottom:30px}
+.note-demo{color:var(--orange);font-weight:500}
+.lien-demo{display:flex;align-items:center;justify-content:center;min-height:44px;margin-top:6px;color:var(--cendre);font-size:14px}
+.lien-demo:hover{color:var(--sumi)}
+.pied{padding:10px max(2.5vw,14px) 30px;font-size:13px;color:var(--cendre)}
 
 /* ─── Couleurs d'essence (variables du theme.css de Duramen) ─── */
 .ton-ec-aulne{background:var(--ec-aulne)} .pt-ec-aulne{fill:var(--ec-aulne)}

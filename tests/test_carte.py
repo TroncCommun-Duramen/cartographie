@@ -182,6 +182,15 @@ with sync_playwright() as p:
         check(f'[{nv}] code coupé : retour à la connexion', pg.is_visible('#ecran-connexion') and pg.is_hidden('#ecran-carte'))
         check(f'[{nv}] aucune écriture vers la base', not any(a[3] not in ('GET', 'POST', 'NOMINATIM', 'OPTIONS') for a in appels)
               and not any(a[3] == 'POST' and '/rest/v1/' in a[0] and '/rpc/' not in a[0] for a in appels))
+        # ── Démonstration sans code ──
+        pg.goto(URL + '?demo'); pg.wait_for_timeout(1500)
+        check(f'[{nv}] démonstration : 51 grumes fictives sans code', pg.is_visible('#ecran-carte') and nb(pg) == 51 and 'fictives' in pg.inner_text('#nom-session'))
+        check(f'[{nv}] démonstration : avertissement visible, aucune lecture de la base', pg.is_visible('#note-demo') and not any('demo' in a[0] for a in appels if 'supabase' in a[0]))
+        pg.fill('#recherche', 'procé'); pg.wait_for_timeout(400)
+        check(f'[{nv}] démonstration : recherche « procé » : 7', nb(pg) == 7)
+        check(f'[{nv}] © Tronc Commun en pied de page', pg.is_visible('.pied') and pg.inner_text('.pied') == '© Tronc Commun')
+        pg.click('#deconnexion'); pg.wait_for_timeout(800)
+        check(f'[{nv}] quitter la démonstration', pg.is_visible('#ecran-connexion') and pg.is_visible('.lien-demo'))
         if nv == 'tel':
             pg.fill('#code', 'nan-test'); pg.click('#btn-connexion'); pg.wait_for_timeout(1200)
             larg_page = pg.evaluate('document.documentElement.scrollWidth')
