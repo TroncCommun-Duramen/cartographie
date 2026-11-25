@@ -197,6 +197,16 @@ with sync_playwright() as p:
         pg.goto(URL); pg.wait_for_timeout(1500)
         check(f'[{nv}] code de l\'app coupé dans la base : pas d\'accès', pg.is_visible('#ecran-connexion') and pg.is_hidden('#ecran-carte'))
         pg.evaluate("localStorage.clear()")
+        # ── Code transmis par le bouton de l'app (iPhone, iPad) ──
+        pg.evaluate("localStorage.clear()")
+        pg.goto('about:blank'); pg.goto(URL + '#code=NAN-TEST'); pg.wait_for_timeout(1500)
+        check(f'[{nv}] code transmis par l\'app : carte ouverte', pg.is_visible('#ecran-carte') and pg.inner_text('#nom-session') == 'Nantes')
+        check(f'[{nv}] code effacé de l\'adresse', pg.evaluate('location.hash') == '' and 'NAN' not in pg.url)
+        check(f'[{nv}] code gardé pour la prochaine fois', 'NAN-TEST' in (pg.evaluate("localStorage.getItem('duramen_carte_session')") or ''))
+        pg.evaluate("localStorage.clear()")
+        pg.goto('about:blank'); pg.goto(URL + '#code=FAUX'); pg.wait_for_timeout(1500)
+        check(f'[{nv}] code transmis inconnu : écran de code', pg.is_visible('#ecran-connexion') and pg.evaluate('location.hash') == '')
+        pg.evaluate("localStorage.clear()")
         # ── Démonstration sans code ──
         pg.goto(URL + '?demo'); pg.wait_for_timeout(1500)
         check(f'[{nv}] démonstration : 51 grumes fictives sans code', pg.is_visible('#ecran-carte') and nb(pg) == 51 and 'fictives' in pg.inner_text('#nom-session'))

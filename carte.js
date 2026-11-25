@@ -49,7 +49,7 @@ async function chargerDonnees(session) {
   var grumes, sorties;
   if (session.type === 'demo') {
     // Démonstration : grumes fictives de demo.js, rien n'est lu dans la base
-    await chargerScript('demo.js?v=3');
+    await chargerScript('demo.js?v=4');
     var cles = {};
     window.DEMO_GRUMES.forEach(function (g) { if (g.debitee) cles[g.id + '_0'] = true; });
     return window.DEMO_GRUMES.map(function (g) { return normaliser(Object.assign({ commune: session.nom }, g), cles); });
@@ -498,8 +498,23 @@ $('liste').addEventListener('click', function (e) {
 // ═══════════ DÉMARRAGE ═══════════
 // Le code gardé sur l'appareil est revérifié à chaque ouverture : un code coupé
 // dans la base ne donne plus accès à rien.
+// Code transmis par le bouton « Voir la carte » de l'app (adresse …/#code=XXX) :
+// utile sur iPhone et iPad, où l'app installée ne partage pas sa mémoire avec
+// Safari. Le code est aussitôt effacé de l'adresse (et de l'historique).
+var codeTransmis = null;
+var m = /(?:^#|&)code=([^&]+)/.exec(location.hash);
+if (m) {
+  try { codeTransmis = decodeURIComponent(m[1]); } catch (e) {}
+  history.replaceState(null, '', location.pathname + location.search);
+}
+
 // Adresse terminée par ?demo : démonstration sans code, avec des grumes fictives
 var gardee = lireSession();
+if (codeTransmis) {
+  // Un clic dans l'app est une demande explicite : il remplace la session gardée
+  gardee = { code: codeTransmis };
+  try { localStorage.removeItem(CLE_SANS_REPRISE); } catch (e) {}
+}
 if (new URLSearchParams(location.search).has('demo')) {
   ouvrir({ type: 'demo', nom: 'Nantes' }).catch(function () {
     $('erreur-connexion').textContent = 'Démonstration indisponible (pas de réseau ?).';
