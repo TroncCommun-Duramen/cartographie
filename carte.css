@@ -1,0 +1,150 @@
+/* carte.css — Duramen · Carte des grumes
+   Les couleurs viennent du theme.css de l'app Duramen (chargé avant ce fichier) :
+   aucune valeur de couleur d'essence ici, seulement des renvois aux variables. */
+
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--washi);color:var(--sumi);font:16px/1.5 var(--font-body),system-ui,sans-serif;overflow-x:clip}
+button,input,select{font:inherit;color:inherit}
+[hidden]{display:none !important}
+
+/* ─── En-tête ─── */
+.entete{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;padding:12px max(2.5vw,14px) 10px}
+.logo{width:40px;height:40px;flex:none}
+.entete h1{margin:0;font-size:22px;font-weight:500}
+.entete h1 span{font-weight:300;color:var(--cendre)}
+.session{margin-left:auto;display:flex;align-items:center;gap:10px}
+.badge-commune{background:var(--indigo-clair);color:var(--indigo);border-radius:var(--border-radius-pill);padding:4px 12px;font-size:14px;font-weight:500}
+.lien{min-height:44px;border:0;background:none;color:var(--cendre);text-decoration:underline;cursor:pointer;padding:0 6px}
+.lien:hover{color:var(--sumi)}
+
+/* ─── Connexion ─── */
+.connexion{display:grid;place-items:center;padding:8vh 16px}
+.carte-connexion{width:min(380px,100%);display:grid;gap:8px;background:#fff;border:var(--border-thin);border-radius:var(--border-radius-card);padding:24px;box-shadow:var(--ombre-carte)}
+.carte-connexion label{font-size:14px;color:var(--cendre)}
+.champ{min-height:48px;padding:0 14px;border:var(--border-field);border-radius:var(--border-radius-inner);font-size:18px;letter-spacing:.04em;text-transform:uppercase;background:#fff}
+.champ:focus{outline:none;border-color:var(--indigo);box-shadow:0 0 0 2px var(--indigo-clair)}
+.aide{margin:0 0 8px;font-size:13px;color:var(--cendre)}
+.btn{min-height:48px;border:0;border-radius:var(--border-radius-card);background:var(--sumi);color:var(--washi);font-weight:500;cursor:pointer}
+.btn:disabled{opacity:.5;cursor:wait}
+.erreur{margin:4px 0 0;color:var(--rouge);font-size:14px}
+
+/* ─── Barre des critères : une ligne, chaque critère s'ouvre à la demande ─── */
+.barre{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:0 max(2.5vw,14px) 10px;position:relative;z-index:1001}
+.bloc-recherche{display:flex;flex-wrap:wrap;gap:6px;flex:1 1 260px;max-width:440px}
+.recherche{flex:1 1 220px;min-height:44px;padding:0 14px;border:var(--border-field);border-radius:22px;background:#fff;font-size:16px}
+.recherche:focus{outline:none;border-color:var(--indigo);box-shadow:0 0 0 2px var(--indigo-clair)}
+.btn-lieu{min-height:44px;padding:0 14px;border:var(--border-filled);border-radius:22px;background:#fff;cursor:pointer;font-size:14px;white-space:nowrap;max-width:100%;overflow:hidden;text-overflow:ellipsis}
+.btn-lieu:disabled{opacity:.5;cursor:wait}
+.zone{display:inline-flex;align-items:center;gap:2px;min-height:44px;padding:0 4px 0 14px;border:var(--border-active);border-radius:22px;background:var(--indigo-clair);color:var(--indigo);font-size:15px;font-weight:500;max-width:100%}
+.zone span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.zone-x{width:36px;height:36px;border:0;background:none;color:inherit;font-size:20px;cursor:pointer;border-radius:50%}
+.zone-x:hover{background:#fff}
+.menu{position:relative}
+.menu summary{list-style:none;min-height:44px;padding:0 14px;border:var(--border-field);border-radius:22px;background:#fff;display:flex;align-items:center;gap:6px;cursor:pointer;white-space:nowrap;font-size:15px}
+.menu summary::-webkit-details-marker{display:none}
+.menu summary::after{content:"";width:6px;height:6px;border:solid var(--cendre);border-width:0 1.5px 1.5px 0;transform:rotate(45deg) translate(-2px,-2px);margin-left:2px}
+.menu summary:focus-visible{outline:2px solid var(--indigo);outline-offset:2px}
+.menu.actif summary{border-color:var(--indigo);background:var(--indigo-clair);color:var(--indigo);font-weight:500}
+.panneau{position:absolute;top:calc(100% + 6px);left:0;min-width:240px;max-height:min(60vh,420px);overflow:auto;background:#fff;border:var(--border-field);border-radius:10px;box-shadow:var(--ombre-posee);padding:6px}
+.case{display:flex;align-items:center;gap:10px;min-height:44px;padding:0 10px;border-radius:6px;cursor:pointer}
+.case:hover{background:var(--neige)}
+.case input{width:18px;height:18px;accent-color:var(--indigo);margin:0}
+.case .nb{margin-left:auto;padding-left:12px;font-size:13px;color:var(--cendre)}
+.case.vide{color:var(--pierre)}
+.sous{padding-left:28px}
+.titre-panneau{font-size:12px;font-weight:600;color:var(--cendre);padding:8px 10px 2px}
+.dates{display:grid;gap:8px;padding:8px 10px}
+.dates label{font-size:13px;color:var(--cendre);display:grid;gap:2px}
+.dates input{min-height:44px;padding:0 8px;border:var(--border-field);border-radius:8px;font-size:16px}
+.compte{margin-left:auto;font-size:15px;color:var(--cendre);white-space:nowrap}
+.compte b{color:var(--sumi);font-weight:500}
+
+/* ─── Carte ─── */
+.cadre{position:relative;margin:0 max(2.5vw,14px)}
+#carte{height:calc(100vh - 150px);min-height:420px;border-radius:10px;background:var(--neige)}
+.message-carte{position:absolute;top:16px;left:50%;transform:translateX(-50%);z-index:1000;background:#fff;padding:10px 16px;border-radius:8px;color:var(--orange);font-weight:500;box-shadow:var(--ombre-posee);margin:0;max-width:calc(100% - 32px);text-align:center}
+.legende{background:rgba(255,255,255,.92);border-radius:8px;padding:8px 12px;font:13px/1.5 var(--font-body),system-ui,sans-serif;color:var(--sumi);max-width:220px;box-shadow:0 1px 6px rgba(0,0,0,.2)}
+.legende summary{cursor:pointer;font-weight:500;min-height:28px;display:flex;align-items:center}
+.legende[open] summary{margin-bottom:4px}
+.legende-ligne{display:flex;align-items:center;gap:8px;white-space:nowrap}
+.legende hr{border:0;border-top:var(--border-thin);margin:5px 0}
+.pastille{width:14px;height:14px;border-radius:50%;flex:none}
+.pastille.en-ligne{display:inline-block;margin-right:8px;vertical-align:-1px}
+/* Pastilles de légende des cercles : le cœur gris figure l'essence */
+.pastille.r-or{background:radial-gradient(circle,var(--cendre) 0 42%,var(--or) 44%)}
+.pastille.r-ardoise{background:radial-gradient(circle,var(--cendre) 0 42%,var(--ardoise) 44%)}
+.pastille.r-blanc{background:radial-gradient(circle,var(--cendre) 0 42%,#fff 44%);box-shadow:0 0 0 1px var(--pierre)}
+.fiche{font:14px/1.45 var(--font-body),system-ui,sans-serif;min-width:210px}
+.fiche b{font-size:16px;font-weight:600}
+.fiche .discret{color:var(--cendre)}
+.etat{display:inline-block;font-size:12px;padding:1px 8px;border-radius:10px;margin-left:6px;white-space:nowrap}
+.etat-exceptionnelle{background:var(--or);color:var(--sumi)}
+.etat-mauvais_etat{background:var(--ardoise);color:var(--washi)}
+/* Photo aérienne adoucie : couleurs baissées, un peu plus claire */
+.photo-adoucie{filter:saturate(.55) brightness(1.08) contrast(.9)}
+.leaflet-control-layers{font:14px/1.6 var(--font-body),system-ui,sans-serif}
+.leaflet-control-layers label{min-height:32px;display:flex;align-items:center}
+/* Points : un rond plein à la couleur de l'essence. Chaque critère ajoute un cercle
+   autour, sans changer la taille du point : le cœur (l'essence) rétrécit. */
+.anneau-or{fill:var(--or)}
+.anneau-ardoise{fill:var(--ardoise)}
+.anneau-blanc{fill:#fff}
+.contour{stroke:#fff;stroke-width:2;fill:none;stroke-opacity:.9}
+.contour-autre{stroke:#fff;stroke-width:1;fill:none;stroke-dasharray:4 4;stroke-opacity:.6}
+.contour-zone{stroke:var(--indigo);stroke-width:3;fill:var(--indigo);fill-opacity:.08}
+
+/* ─── Liste repliée sous la carte ─── */
+.liste{margin:14px max(2.5vw,14px) 10px}
+.liste summary{min-height:44px;display:inline-flex;align-items:center;cursor:pointer;font-weight:500}
+.tableau{width:100%;border-collapse:collapse;font-size:15px;margin-top:6px}
+.tableau th{text-align:left;font-size:13px;font-weight:600;color:var(--cendre);padding:8px 6px;border-bottom:var(--border-field)}
+.tableau td{padding:10px 6px;border-bottom:var(--border-thin);vertical-align:top}
+.tableau .num{text-align:right;white-space:nowrap}
+.tableau .date{white-space:nowrap}
+.tableau tbody tr{cursor:pointer}
+.tableau tbody tr:hover,.tableau tbody tr.vise{background:var(--indigo-clair)}
+.sans-commune .col-commune{display:none}
+.note{margin:6px max(2.5vw,14px) 12px;font-size:13px;color:var(--cendre)}
+.note:last-child{margin-bottom:30px}
+
+/* ─── Couleurs d'essence (variables du theme.css de Duramen) ─── */
+.ton-ec-aulne{background:var(--ec-aulne)} .pt-ec-aulne{fill:var(--ec-aulne)}
+.ton-ec-autre{background:var(--ec-autre)} .pt-ec-autre{fill:var(--ec-autre)}
+.ton-ec-cedre{background:var(--ec-cedre)} .pt-ec-cedre{fill:var(--ec-cedre)}
+.ton-ec-chataignier{background:var(--ec-chataignier)} .pt-ec-chataignier{fill:var(--ec-chataignier)}
+.ton-ec-chene{background:var(--ec-chene)} .pt-ec-chene{fill:var(--ec-chene)}
+.ton-ec-chene-marais{background:var(--ec-chene-marais)} .pt-ec-chene-marais{fill:var(--ec-chene-marais)}
+.ton-ec-chene-rouge{background:var(--ec-chene-rouge)} .pt-ec-chene-rouge{fill:var(--ec-chene-rouge)}
+.ton-ec-cypres{background:var(--ec-cypres)} .pt-ec-cypres{fill:var(--ec-cypres)}
+.ton-ec-douglas{background:var(--ec-douglas)} .pt-ec-douglas{fill:var(--ec-douglas)}
+.ton-ec-epicea{background:var(--ec-epicea)} .pt-ec-epicea{fill:var(--ec-epicea)}
+.ton-ec-frene{background:var(--ec-frene)} .pt-ec-frene{fill:var(--ec-frene)}
+.ton-ec-hetre{background:var(--ec-hetre)} .pt-ec-hetre{fill:var(--ec-hetre)}
+.ton-ec-meleze{background:var(--ec-meleze)} .pt-ec-meleze{fill:var(--ec-meleze)}
+.ton-ec-merisier{background:var(--ec-merisier)} .pt-ec-merisier{fill:var(--ec-merisier)}
+.ton-ec-noyer{background:var(--ec-noyer)} .pt-ec-noyer{fill:var(--ec-noyer)}
+.ton-ec-peuplier{background:var(--ec-peuplier)} .pt-ec-peuplier{fill:var(--ec-peuplier)}
+.ton-ec-pin-m{background:var(--ec-pin-m)} .pt-ec-pin-m{fill:var(--ec-pin-m)}
+.ton-ec-platane{background:var(--ec-platane)} .pt-ec-platane{fill:var(--ec-platane)}
+.ton-ec-robinier{background:var(--ec-robinier)} .pt-ec-robinier{fill:var(--ec-robinier)}
+.ton-ec-sequoia{background:var(--ec-sequoia)} .pt-ec-sequoia{fill:var(--ec-sequoia)}
+.ton-ec-tilleul{background:var(--ec-tilleul)} .pt-ec-tilleul{fill:var(--ec-tilleul)}
+
+/* ─── Téléphone ─── */
+@media (max-width:700px){
+  .entete h1{font-size:19px}
+  .session{margin-left:0;width:100%}
+  .bloc-recherche{max-width:none;flex-basis:100%}
+  .barre{gap:6px}
+  .menu summary{padding:0 11px;font-size:14px}
+  .compte{margin-left:0;width:100%}
+  .panneau{position:fixed;left:8px;right:8px;top:auto;bottom:8px;max-height:70vh}
+  #carte{height:68vh;min-height:360px}
+  .legende{max-width:160px;font-size:12px;padding:6px 8px}
+  .tableau thead{display:none}
+  .tableau tr{display:grid;padding:8px 0;border-bottom:var(--border-thin)}
+  .tableau td{border:0;padding:2px 0 2px 7.5em;text-align:left;white-space:normal}
+  .tableau td::before{content:attr(data-l);float:left;width:7em;margin-left:-7.5em;color:var(--cendre);font-size:13px}
+  .tableau .num{text-align:left}
+  .sans-commune .tableau td.col-commune{display:none}
+}

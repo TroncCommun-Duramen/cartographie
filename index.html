@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Duramen · Carte des grumes</title>
+<link rel="icon" href="logo-cartographie.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+<link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.24.0/dist/maplibre-gl.css" integrity="sha384-uTttxo/aOKbdE5RlD/SPzSDoDmNvGlUYPjONi2MN/b7c9HPSvW07OIuyP7uL6jxK" crossorigin="">
+<!-- Couleurs et polices : le theme.css de l'app Duramen lui-même (même site),
+     pour que la carte suive toute mise à jour des couleurs. -->
+<link rel="stylesheet" href="../duramen/theme.css">
+<link rel="stylesheet" href="carte.css">
+</head>
+<body>
+
+<header class="entete">
+  <img class="logo" src="logo-cartographie.png" alt="" width="40" height="40">
+  <h1>Duramen <span>· Carte des grumes</span></h1>
+  <div class="session" id="session" hidden>
+    <span class="badge-commune" id="nom-session"></span>
+    <button class="lien" id="deconnexion" type="button">Se déconnecter</button>
+  </div>
+</header>
+
+<!-- Connexion : le code de la commune (le même que dans l'app), ou le code de Tronc Commun -->
+<main class="connexion" id="ecran-connexion">
+  <form class="carte-connexion" id="form-connexion" autocomplete="off">
+    <label for="code">Code d'accès</label>
+    <input id="code" class="champ" type="text" autocapitalize="characters" spellcheck="false" required>
+    <p class="aide">Le même code que dans l'application Duramen.</p>
+    <button class="btn" id="btn-connexion" type="submit">Ouvrir la carte</button>
+    <p class="erreur" id="erreur-connexion" role="alert" hidden></p>
+  </form>
+</main>
+
+<main id="ecran-carte" hidden>
+  <nav class="barre" aria-label="Critères">
+    <div class="bloc-recherche">
+      <input id="recherche" class="recherche" type="search" placeholder="Chercher : parc, rue, quartier, numéro…" autocomplete="off">
+      <button class="btn-lieu" id="chercher-lieu" type="button" hidden></button>
+    </div>
+    <span class="zone" id="zone" hidden><span id="zone-nom"></span><button class="zone-x" id="zone-x" type="button" aria-label="Retirer ce lieu">×</button></span>
+    <details class="menu" data-menu="commune" id="m-commune"><summary>Commune</summary><div class="panneau" id="p-commune"></div></details>
+    <details class="menu" data-menu="essence"><summary>Essence</summary><div class="panneau" id="p-essence"></div></details>
+    <details class="menu" data-menu="cause"><summary>Cause</summary><div class="panneau" id="p-cause"></div></details>
+    <details class="menu" data-menu="etat"><summary>État</summary><div class="panneau" id="p-etat"></div></details>
+    <details class="menu" data-menu="dates"><summary>Dates</summary><div class="panneau">
+      <div class="dates"><label>Abattue à partir du<input type="date" id="du"></label><label>jusqu'au<input type="date" id="au"></label></div>
+    </div></details>
+    <button class="lien" id="effacer" type="button" hidden>Tout effacer</button>
+    <span class="compte" id="compte"></span>
+  </nav>
+
+  <div class="cadre">
+    <div id="carte"></div>
+    <p class="message-carte" id="message-carte" hidden></p>
+  </div>
+
+  <details class="liste" id="liste-bloc">
+    <summary id="liste-titre">Voir la liste</summary>
+    <table class="tableau">
+      <thead><tr><th>Numéro</th><th>Essence</th><th>Lieu</th><th class="col-commune">Commune</th><th>Abattage</th><th>Cause</th><th class="num">Cubage</th></tr></thead>
+      <tbody id="liste"></tbody>
+    </table>
+  </details>
+
+  <p class="note" id="sans-position" hidden></p>
+  <p class="note">Données déclarées par les agents dans Duramen, en lecture seule. Fonds de carte : IGN Géoplateforme. Noms de lieux : © contributeurs OpenStreetMap.</p>
+</main>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<script src="https://unpkg.com/maplibre-gl@5.24.0/dist/maplibre-gl.js" integrity="sha384-5+cfbwT0iiub6VsQAdn6yz16nr6sDiQoHx6tm4O8OVYXHYOxcffFmCJBL0dgdvGp" crossorigin=""></script>
+<script src="https://unpkg.com/@maplibre/maplibre-gl-leaflet@0.1.4/leaflet-maplibre-gl.js" integrity="sha384-tXYNKOHx4T02jMP7YYCtBxPIv1B5gaA5mcVPBzqMp6d7VzWzxJgI2aWF/nJLrQdS" crossorigin=""></script>
+<!-- Liste des essences et de leurs couleurs : le noyau de l'app Duramen lui-même -->
+<script src="../duramen/core.js"></script>
+<script src="contours.js"></script>
+<script src="carte.js"></script>
+</body>
+</html>
