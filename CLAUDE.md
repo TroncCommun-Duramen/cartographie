@@ -11,4 +11,5 @@ Application à part de Duramen (voir le dépôt `TroncCommun-Duramen/duramen`, s
 - La carte montre, elle n'interprète pas : pas de bilan ni de graphique (c'est la synthèse).
 - OpenStreetMap : une demande seulement au clic, jamais à chaque lettre tapée.
 - Code sur une branche, fusion dans `main` après validation du porteur. Documentation directement sur `main`.
+- **Version** : après toute modification, augmenter le numéro `?v=` de `carte.css`, `carte.js`, `contours.js` (dans `index.html`) et `demo.js` (dans `carte.js`). Sans ça, les navigateurs gardent l'ancienne version jusqu'à 10 minutes.
 - Essais : `tests/test_carte.py` (Playwright, base imitée) avant chaque livraison.

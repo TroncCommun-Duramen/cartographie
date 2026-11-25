@@ -49,7 +49,7 @@ async function chargerDonnees(session) {
   var grumes, sorties;
   if (session.type === 'demo') {
     // Démonstration : grumes fictives de demo.js, rien n'est lu dans la base
-    await chargerScript('demo.js');
+    await chargerScript('demo.js?v=2');
     var cles = {};
     window.DEMO_GRUMES.forEach(function (g) { if (g.debitee) cles[g.id + '_0'] = true; });
     return window.DEMO_GRUMES.map(function (g) { return normaliser(Object.assign({ commune: session.nom }, g), cles); });
