@@ -49,7 +49,7 @@ async function chargerDonnees(session) {
   var grumes, sorties;
   if (session.type === 'demo') {
     // Démonstration : grumes fictives de demo.js, rien n'est lu dans la base
-    await chargerScript('demo.js?v=2');
+    await chargerScript('demo.js?v=3');
     var cles = {};
     window.DEMO_GRUMES.forEach(function (g) { if (g.debitee) cles[g.id + '_0'] = true; });
     return window.DEMO_GRUMES.map(function (g) { return normaliser(Object.assign({ commune: session.nom }, g), cles); });
@@ -143,6 +143,7 @@ $('form-connexion').addEventListener('submit', async function (e) {
     var s = await connecter($('code').value);
     if (!s) throw new Error('code');
     ecrireSession(s);
+    try { localStorage.removeItem(CLE_SANS_REPRISE); } catch (e) {}
     await ouvrir(s);
   } catch (err) {
     $('erreur-connexion').textContent = err.message === 'code'
@@ -157,8 +158,25 @@ $('form-connexion').addEventListener('submit', async function (e) {
 $('deconnexion').addEventListener('click', function () {
   if (session && session.type === 'demo') { location.href = location.pathname; return; }
   ecrireSession(null);
+  // Ne pas reprendre aussitôt le code de l'app : on revient à l'écran de code
+  try { localStorage.setItem(CLE_SANS_REPRISE, '1'); } catch (e) {}
   location.reload();
 });
+
+// Code de l'app Duramen ouverte sur le même appareil (même site) : mobile ou bureau.
+// L'agent qui vient de l'app n'a rien à retaper.
+var CLE_SANS_REPRISE = 'duramen_carte_sans_reprise';
+function codeDeLApp() {
+  try { if (localStorage.getItem(CLE_SANS_REPRISE)) return null; } catch (e) { return null; }
+  var cles = ['duramen_session', 'duramen_bureau_session'];
+  for (var i = 0; i < cles.length; i++) {
+    try {
+      var s = JSON.parse(localStorage.getItem(cles[i]));
+      if (s && s.code) return s.code;
+    } catch (e) {}
+  }
+  return null;
+}
 
 async function ouvrir(s) {
   session = s;
@@ -487,8 +505,9 @@ if (new URLSearchParams(location.search).has('demo')) {
     $('erreur-connexion').textContent = 'Démonstration indisponible (pas de réseau ?).';
     $('erreur-connexion').hidden = false;
   });
-} else if (gardee && gardee.code) {
-  connecter(gardee.code).then(function (s) {
+} else if ((gardee && gardee.code) || codeDeLApp()) {
+  $('ecran-connexion').hidden = true;   // pas d'écran de code pendant la vérification
+  connecter(gardee && gardee.code ? gardee.code : codeDeLApp()).then(function (s) {
     if (!s) { ecrireSession(null); throw new Error('code'); }
     ecrireSession(s);
     return ouvrir(s);
